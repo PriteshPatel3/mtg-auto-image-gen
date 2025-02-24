@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Image Gen</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9; /* Light background for better contrast */
+        }
+        .table-container {
+            width: 80%;
+            margin: 20px auto;
+            overflow-y: auto;
+            max-height: 400px; /* Limits table to about 10 rows */
+            border: 1px solid #ccc; /* Softer border color */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            background-color: white; /* White background for the table container */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc; /* Softer border color */
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            position: sticky;
+            top: 0;
+            border-top-left-radius: 10px; /* Rounded corners for the header */
+            border-top-right-radius: 10px; /* Rounded corners for the header */
+        }
+        .images-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            gap: 20px;
+        }
+        .images-container img {
+            width: 80%;  /* Match table width */
+            height: auto;
+            border: 2px solid #ccc; /* Softer border color */
+            border-radius: 10px; /* Rounded corners for images */
+            background-color: white;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for images */
+        }
+        button {
+            border-radius: 5px; /* Rounded corners for buttons */
+            padding: 10px 20px;
+            background-color: #007bff; /* Bootstrap primary color */
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sales Image Gen</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Upload a CSV File</h2>
+            <form action="/upload/" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".csv" required>
+                <button type="submit">Upload</button>
+            </form>
+
+            {% if error %}
+                <p style="color: red;">{{ error }}</p>
+            {% endif %}
+
+            {% if data %}
+                <h3>Uploaded CSV Preview:</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            {% for col in data['df'][0].keys() %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                        {% for row in data['df'] %}
+                            <tr>
+                                {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <h3>Generated Images:</h3>
+                <div class="images-container">
+                    {% for image in data['images'] %}
+                        <img src="{{ image }}" alt="Generated Image">
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sales Image Gen</p>
+    </footer>
+</body>
+</html>
